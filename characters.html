@@ -6,9 +6,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/images/favicon/favicon.ico">
     <title>Angelica Bot - Characters</title>
+
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+    <script src="http://codepb.github.io/jquery-template/jquery.loadTemplate-0.4.3.js"></script>
 </head>
 <body>
+    <div class="ui-widget">
+        <input type="text" id="heroInput" class="ui-autocomplete-input" value="" autocomplete="off">
+        <input type="button" id="searchButton" value="Buscar">
+    </div>
     Characters
+    <table>
+        <thead>
+            <tr>
+                <th>Test</th>
+                <th>Name</th>
+                <th>Rarity</th>
+                <th>Element</th>
+                <th>Class</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
 </body>
+
+script type="text/html" id="characterInfo">
+        <tr>
+            <td data-content="">sth</td>
+            <td data-content="name"></td>
+            <td data-content="rarity"></td>
+            <td data-content="attribute"></td>
+            <td data-content="role"></td>
+        </tr>
+   </script>
+
+<script type="text/javascript">
+    var unitArray = [];
+    var unitNames = [];
+
+    //Loads the characters and names from the JSON file into 2 arrays
+    /*$.getJSON("./heroes.json", function (data) {
+        $.each(data, function (key, val) {
+            unitArray.push(val);
+            unitNames.push(val.name);
+        })
+    });*/
+    $.getJSON("https://ceciliabot.github.io/data/HeroDatabase.json", function (data) {
+        $.each(data, function (key, val) {
+            unitArray.push(val);
+            unitNames.push(val.name);
+        })
+    });
+    
+
+    //Shows autocomplete on the search bar
+    $("#heroInput").autocomplete({
+        source: unitNames,
+        select: function (event, ui) {
+            pushCharacter(ui.item.value);
+            $(this).val("");
+            return false;
+        }
+    });
+
+    //Looks for the character in the search bar when the button is clicked
+    $(document).on('click', '#searchButton', function (e) {
+        let input = $("#heroInput").val();
+        pushCharacter(input);
+    });
+
+    //Searches when the enter key is pressed while in input
+    $('#heroInput').bind("enterKey", function (e) {
+        let input = $("#heroInput").val();
+        pushCharacter(input);
+        $(".ui-menu-item").hide();
+    });
+    $('#heroInput').keyup(function (e) {
+        if (e.keyCode == 13) {
+            $(this).trigger("enterKey");
+        }
+    });
+
+    //Shows the selected character on a list
+    function pushCharacter(input) {
+        var items = [];
+        if (input.length > 0) {
+            for (let character of unitArray) {
+                if (character.name.toLowerCase() == input.toLowerCase()) {
+                    /*items.push( "<li id='" + character.id + "'>" + character.name + " " + character.rarity + " " + character.attribute + "</li>" );
+                    $( "<ul/>", {
+                        "class": "character-list",
+                        html: items.join( "" )
+                    }).appendTo( "body" );*/
+                    console.log($("tbody"));
+                    $("tbody").loadTemplate($("#characterInfo"), character, {
+                        append: true
+                    });
+                }
+            }
+            $("#heroInput").val("");
+        }
+    }
+</script>
 <!-- Hello there, this site is still in development -->
 </html>
