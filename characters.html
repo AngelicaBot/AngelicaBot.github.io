@@ -59,7 +59,7 @@
             unitNames.push(val.name);
         })
     });*/
-    $.getJSON("https://ceciliabot.github.io/data/HeroDatabase.json", function (data) {
+    $.getJSON("./data/characters.json", function (data) {
         $.each(data, function (key, val) {
             unitArray.push(val);
             unitNames.push(val.name);
